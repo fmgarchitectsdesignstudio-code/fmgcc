@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FMG Core Construct — Software profesional de presupuestos de obra · Colombia</title>
+  <meta name="description" content="Software colombiano de presupuestos de obra con +3.200 APUs del Pacífico. Gantt WBS, Admin % AIU, exportación Excel. 100% offline. Para ingenieros y arquitectos.">
+  <meta name="keywords" content="presupuestos obra colombia, software construccion colombia, APU, analisis precios unitarios, gantt obra, FMG Core Construct, presupuestos ingenieria civil">
+  <meta name="author" content="FMG Architects Design Studio">
+  <link rel="icon" href="assets/icon.ico">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="FMG Core Construct — Software de presupuestos de obra">
+  <meta property="og:description" content="Presupuesta obras en minutos. +3.200 APUs colombianos, Gantt WBS, Admin % / AIU. 100% offline.">
+  <meta property="og:image" content="assets/hero_construction.jpeg">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_CO">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:      #0D1B2A;
+      --navy-card: #111E2E;
+      --navy-mid:  #162233;
+      --navy-deep: #060E18;
+      --blue:      #1F6EAA;
+      --blue-lt:   #3A9FD8;
+      --orange:    #E86B00;
+      --orange-lt: #FF8C30;
+      --white:     #FFFFFF;
+      --gray:      #8FA8C0;
+      --gray-lt:   #B8CDD8;
+      --green:     #1A9A50;
+      --font-main: 'Poppins', 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+      --radius:    12px;
+      --shadow:    0 8px 32px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--navy);
+      color: var(--white);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─────────────────────────────────────
+       UTILITIES
+    ───────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 80px 0; }
+    .section-alt { background: var(--navy-mid); }
+
+    .section-label {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      border: 1px solid rgba(232,107,0,.35);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .section-title span { color: var(--orange); }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--gray-lt);
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: .95rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all .2s ease;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(232,107,0,.4);
+    }
+    .btn-primary:hover { background: var(--orange-lt); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,107,0,.55); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid rgba(255,255,255,.3);
+    }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+
+    .btn-outline-orange {
+      background: transparent;
+      color: var(--orange);
+      border: 2px solid var(--orange);
+    }
+    .btn-outline-orange:hover { background: var(--orange); color: #fff; }
+
+    /* Blueprint grid background */
+    .bg-grid {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(31,110,170,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31,110,170,.05) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(31,110,170,.15);
+      border: 1px solid rgba(31,110,170,.3);
+      color: var(--gray-lt);
+      font-size: .8rem;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      margin-bottom: 24px;
+    }
+
+    /* ─────────────────────────────────────
+       NAVIGATION
+    ───────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(6,14,24,.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(31,110,170,.18);
+      transition: background .3s;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      object-fit: contain;
+      padding: 3px;
+      border: 2px solid var(--orange);
+    }
+
+    .nav-logo-text {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--white);
+      line-height: 1.1;
+    }
+    .nav-logo-text small { display: block; font-weight: 400; font-size: .68rem; color: var(--gray); }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 8px;
+    }
+    .nav-links a {
+      color: var(--gray-lt);
+      text-decoration: none;
+      font-size: .88rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--white); background: rgba(255,255,255,.07); }
+
+    .nav-cta { font-size: .88rem !important; padding: 10px 20px !important; }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .nav-mobile {
+      display: none;
+      flex-direction: column;
+      background: var(--navy-deep);
+      border-top: 1px solid rgba(31,110,170,.2);
+      padding: 16px 24px;
+      gap: 4px;
+    }
+    .nav-mobile a {
+      color: var(--gray-lt);
+      text-decoration: none;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: .95rem;
+    }
+    .nav-mobile.open { display: flex; }
+
+    /* ─────────────────────────────────────
+       HERO
+    ───────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 68px;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: var(--navy-deep);
+      overflow: hidden;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        /* Fundido suave hacia el fondo de la página */
+        linear-gradient(to bottom, transparent 55%, rgba(13,27,42,.95) 100%),
+        /* Velo general con transición suave de izquierda a derecha */
+        linear-gradient(160deg,
+          rgba(13,27,42,.80) 0%,
+          rgba(13,27,42,.72) 25%,
+          rgba(6,14,24,.62) 50%,
+          rgba(13,27,42,.72) 75%,
+          rgba(13,27,42,.80) 100%);
+      z-index: 2;
+    }
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.62;
+      z-index: 1;
+    }
+
+    .hero-glow-1 {
+      position: absolute; top: -120px; right: -80px;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,107,0,.12) 0%, transparent 70%);
+      z-index: 1; pointer-events: none;
+    }
+    .hero-glow-2 {
+      position: absolute; bottom: -100px; left: -60px;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(31,110,170,.10) 0%, transparent 70%);
+      z-index: 1; pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative; z-index: 10;
+      max-width: 1100px; margin: 0 auto;
+      padding: 80px 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .hero-title .accent { color: var(--orange); }
+    .hero-title .brand { color: var(--blue-lt); }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--gray-lt);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding-top: 28px;
+    }
+
+    .hero-stat { text-align: center; }
+    .hero-stat strong {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--orange);
+      font-family: var(--font-mono);
+    }
+    .hero-stat span { font-size: .75rem; color: var(--gray); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* Hero right — UI cards */
+    .hero-ui {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .ui-card {
+      background: rgba(17,30,46,.9);
+      border: 1px solid rgba(31,110,170,.25);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .ui-card-title {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--gray-lt);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Gantt mini */
+    .gantt-grid {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 4px 8px;
+      font-size: .72rem;
+    }
+    .gantt-row-label { color: var(--gray); padding: 3px 0; display: flex; align-items: center; }
+    .gantt-track { position: relative; height: 18px; background: rgba(255,255,255,.04); border-radius: 3px; overflow: hidden; }
+    .gantt-bar { position: absolute; top: 2px; bottom: 2px; border-radius: 3px; }
+    .gantt-months {
+      grid-column: 2;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      color: var(--gray);
+      margin-bottom: 4px;
+    }
+
+    /* APU mini table */
+    .apu-table { width: 100%; font-size: .72rem; border-collapse: collapse; }
+    .apu-table th {
+      color: var(--gray);
+      font-weight: 600;
+      text-align: left;
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .apu-table td { padding: 4px 6px; color: var(--gray-lt); }
+    .apu-table tr:hover td { background: rgba(255,255,255,.03); }
+    .apu-total-row td {
+      background: rgba(232,107,0,.12) !important;
+      color: var(--orange-lt) !important;
+      font-weight: 700;
+      border-top: 1px solid rgba(232,107,0,.3);
+    }
+    .apu-aiu-row td { color: var(--gray) !important; font-size: .68rem !important; }
+    .num { text-align: right; font-family: var(--font-mono); }
+
+    /* ─────────────────────────────────────
+       FEATURES
+    ───────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--navy-card);
+      border: 1px solid rgba(31,110,170,.18);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+    }
+    .feature-card:hover {
+      border-color: rgba(232,107,0,.45);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(232,107,0,.1);
+    }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      background: rgba(232,107,0,.12);
+      border: 1px solid rgba(232,107,0,.25);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--white);
+    }
+
+    .feature-desc { font-size: .87rem; color: var(--gray); line-height: 1.6; }
+
+    /* ─────────────────────────────────────
+       STATS BAR
+    ───────────────────────────────────── */
+    .stats-bar {
+      background: linear-gradient(135deg, rgba(232,107,0,.12) 0%, rgba(31,110,170,.12) 100%);
+      border-top: 1px solid rgba(232,107,0,.2);
+      border-bottom: 1px solid rgba(31,110,170,.2);
+      padding: 36px 0;
+    }
+
+    .stats-bar-inner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 8px 16px;
+      border-right: 1px solid rgba(255,255,255,.08);
+    }
+    .stat-item:last-child { border-right: none; }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label { font-size: .8rem; color: var(--gray); text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ─────────────────────────────────────
+       PLANS
+    ───────────────────────────────────── */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .plan-card {
+      background: var(--navy-card);
+      border: 1px solid rgba(31,110,170,.2);
+      border-radius: var(--radius);
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color .25s, box-shadow .25s;
+      position: relative;
+    }
+
+    .plan-card.featured {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 1px rgba(232,107,0,.3), 0 12px 40px rgba(232,107,0,.15);
+    }
+
+    .plan-badge {
+      position: absolute;
+      top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--orange);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .plan-letter {
+      font-size: .72rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .plan-name { font-size: 1.05rem; font-weight: 800; }
+
+    .plan-price {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--orange);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+    .plan-price sub {
+      font-size: .75rem;
+      font-weight: 400;
+      color: var(--gray);
+      vertical-align: baseline;
+    }
+    .plan-price-note { font-size: .78rem; color: var(--gray); margin-top: 2px; }
+
+    .plan-divider { border: none; border-top: 1px solid rgba(255,255,255,.08); margin: 4px 0; }
+
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .plan-features li {
+      font-size: .84rem;
+      color: var(--gray-lt);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .plan-features li.no::before { content: '✗'; color: #666; }
+
+    .plan-cta { margin-top: auto; }
+
+    /* Sub-opciones de plan con variantes de precio */
+    .plan-b-opts { display: flex; flex-direction: column; gap: 6px; margin: 4px 0; }
+    .plan-b-opt {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .82rem;
+      padding: 7px 10px;
+      background: rgba(255,255,255,.04);
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.07);
+    }
+    .plan-b-opt .price-b { font-family: var(--font-mono); color: var(--orange-lt); font-weight: 700; }
+    .plan-b-opt .saving { font-size: .7rem; color: var(--green); }
+
+    /* ─────────────────────────────────────
+       COMPARISON TABLE
+    ───────────────────────────────────── */
+    .comparison-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: .9rem;
+    }
+
+    .comparison-table thead tr { background: rgba(31,110,170,.2); }
+    .comparison-table th {
+      padding: 14px 20px;
+      font-weight: 700;
+      text-align: left;
+      color: var(--gray-lt);
+    }
+    .comparison-table th:first-child { color: var(--white); }
+    .comparison-table th.fmg { color: var(--orange); }
+
+    .comparison-table tbody tr { background: var(--navy-card); border-bottom: 1px solid rgba(255,255,255,.05); }
+    .comparison-table tbody tr:nth-child(even) { background: rgba(17,30,46,.6); }
+    .comparison-table tbody tr:hover { background: rgba(31,110,170,.08); }
+
+    .comparison-table td {
+      padding: 13px 20px;
+      color: var(--gray-lt);
+      vertical-align: middle;
+    }
+    .comparison-table td:first-child { font-weight: 600; color: var(--white); }
+    .comparison-table td.fmg { color: var(--orange-lt); font-weight: 700; }
+
+    .check { color: var(--green); font-size: 1.1rem; }
+    .cross { color: #666; }
+    .tag-win {
+      display: inline-block;
+      background: rgba(26,154,80,.15);
+      color: var(--green);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 4px;
+    }
+
+    /* ─────────────────────────────────────
+       DOWNLOAD
+    ───────────────────────────────────── */
+    .download-section {
+      background:
+        linear-gradient(135deg, rgba(13,27,42,.93) 0%, rgba(6,14,24,.93) 100%),
+        url('assets/blueprint_bg.jpeg') center/cover no-repeat;
+      position: relative;
+      text-align: center;
+    }
+
+    .download-box {
+      background: var(--navy-card);
+      border: 1px solid rgba(232,107,0,.3);
+      border-radius: 16px;
+      padding: 52px 48px;
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 12px 60px rgba(232,107,0,.12);
+    }
+
+    .download-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 14px;
+      background: #fff;
+      object-fit: contain;
+      padding: 8px;
+      margin-bottom: 20px;
+      border: 3px solid var(--orange);
+      box-shadow: 0 0 28px rgba(232,107,0,.4);
+    }
+
+    .download-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+    .download-sub { color: var(--gray-lt); margin-bottom: 28px; }
+
+    .download-specs {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .spec-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: .8rem;
+      color: var(--gray-lt);
+    }
+
+    /* ─────────────────────────────────────
+       CONTACT
+    ───────────────────────────────────── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .contact-info { display: flex; flex-direction: column; gap: 20px; }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px;
+      background: var(--navy-card);
+      border: 1px solid rgba(31,110,170,.18);
+      border-radius: var(--radius);
+      transition: border-color .2s;
+    }
+    .contact-item:hover { border-color: rgba(232,107,0,.4); }
+
+    .contact-icon {
+      width: 44px; height: 44px;
+      background: rgba(232,107,0,.12);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .contact-item-title { font-weight: 700; font-size: .88rem; margin-bottom: 2px; }
+    .contact-item-val { color: var(--gray-lt); font-size: .88rem; }
+    .contact-item-val a { color: var(--orange-lt); text-decoration: none; }
+    .contact-item-val a:hover { text-decoration: underline; }
+
+    .payment-methods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .payment-chip {
+      background: rgba(31,110,170,.12);
+      border: 1px solid rgba(31,110,170,.25);
+      color: var(--gray-lt);
+      font-size: .78rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+    }
+
+    /* Contact form */
+    .contact-form { display: flex; flex-direction: column; gap: 14px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: .85rem; color: var(--gray-lt); font-weight: 600; }
+
+    .form-input, .form-textarea, .form-select {
+      background: var(--navy-card);
+      border: 1px solid rgba(31,110,170,.25);
+      color: var(--white);
+      font-family: var(--font-main);
+      font-size: .92rem;
+      padding: 12px 16px;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--orange); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--gray); }
+    .form-textarea { min-height: 120px; resize: vertical; }
+    .form-select option { background: var(--navy-deep); color: var(--white); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .form-note { font-size: .78rem; color: var(--gray); }
+
+    /* ─────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────── */
+    footer {
+      background: var(--navy-deep);
+      border-top: 1px solid rgba(31,110,170,.15);
+      padding: 40px 0 24px;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 32px;
+    }
+
+    .footer-brand { display: flex; flex-direction: column; gap: 14px; }
+    .footer-logo { display: flex; align-items: center; gap: 10px; }
+    .footer-logo img { width: 36px; height: 36px; border-radius: 50%; background: #fff; padding: 2px; border: 2px solid var(--orange); }
+    .footer-logo-text { font-weight: 800; font-size: .95rem; }
+    .footer-brand p { font-size: .85rem; color: var(--gray); line-height: 1.6; }
+
+    .footer-col h4 { font-size: .88rem; font-weight: 700; color: var(--white); margin-bottom: 14px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul li a { color: var(--gray); font-size: .85rem; text-decoration: none; transition: color .2s; }
+    .footer-col ul li a:hover { color: var(--orange-lt); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .footer-bottom p { font-size: .8rem; color: var(--gray); }
+    .footer-tags { font-size: .76rem; color: rgba(143,168,192,.5); }
+
+    /* ─────────────────────────────────────
+       WHATSAPP FAB
+    ───────────────────────────────────── */
+    .wa-fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      width: 58px;
+      height: 58px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 6px 28px rgba(37,211,102,.45);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .wa-fab:hover { transform: scale(1.1); box-shadow: 0 8px 36px rgba(37,211,102,.6); }
+    .wa-fab svg { width: 30px; height: 30px; fill: #fff; }
+
+    /* ─────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero-content { grid-template-columns: 1fr; }
+      .hero-ui { display: none; }
+      .plans-grid { grid-template-columns: repeat(3, 1fr); }
+      .comparison-table { font-size: .8rem; }
+      .comparison-table th, .comparison-table td { padding: 10px 12px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .section { padding: 56px 0; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stats-bar-inner { grid-template-columns: repeat(2, 1fr); }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,.07); }
+      .nav-links, .nav-cta { display: none; }
+      .nav-toggle { display: block; }
+      .hero-btns { flex-direction: column; align-items: flex-start; }
+      .hero-stats { gap: 16px; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .form-row { grid-template-columns: 1fr; }
+      .download-box { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="assets/logo_2d.jpeg" alt="FMG Logo" class="nav-logo-img">
+        <div class="nav-logo-text">
+          FMG Core Construct
+          <small>FMG Architects Design Studio</small>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#funciones">Funciones</a></li>
+        <li><a href="#tutorial">Tutorial</a></li>
+        <li><a href="#planes">Precios</a></li>
+        <li><a href="#comparativa">¿Por qué FMG?</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+      <a href="#descarga" class="btn btn-primary nav-cta">Demo gratis</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menú">☰</button>
+    </div>
+    <div class="nav-mobile" id="nav-mobile">
+      <a href="#funciones">Funciones</a>
+      <a href="#tutorial">Tutorial</a>
+      <a href="#planes">Precios</a>
+      <a href="#comparativa">¿Por qué FMG?</a>
+      <a href="#descarga">Descargar Demo</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg">
+      <video autoplay muted loop playsinline class="hero-video">
+        <source src="assets/hero_bg.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="bg-grid"></div>
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="tag-badge">
+            🏗️ Software de Construcción &nbsp;·&nbsp; +3.200 APUs &nbsp;·&nbsp; Hecho en Colombia 🇨🇴
+          </span>
+        </div>
+        <h1 class="hero-title">
+          Presupuesta obras<br>
+          <span class="accent">en minutos,</span><br>
+          <span class="brand">no en días</span>
+        </h1>
+        <p class="hero-sub">
+          Software profesional de presupuestos de obra para ingenieros y arquitectos colombianos.
+          APUs del Pacífico Colombiano, Gantt WBS y módulo Admin % integrados. <strong>100% offline.</strong>
+        </p>
+        <div class="hero-btns">
+          <a href="#descarga" class="btn btn-primary">
+            ⬇ Descargar Demo gratis
+          </a>
+          <a href="#planes" class="btn btn-secondary">
+            Ver planes y precios
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <strong>+3.200</strong>
+            <span>APUs incluidos</span>
+          </div>
+          <div class="hero-stat">
+            <strong>100%</strong>
+            <span>Sin internet</span>
+          </div>
+          <div class="hero-stat">
+            <strong>$449k</strong>
+            <span>Plan permanente</span>
+          </div>
+          <div class="hero-stat">
+            <strong>Win10/11</strong>
+            <span>x64</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI Preview Cards (hero right) -->
+      <div class="hero-ui">
+        <!-- Gantt card -->
+        <div class="ui-card">
+          <div class="ui-card-title">📅 Programación Gantt — WBS</div>
+          <div class="gantt-grid">
+            <div></div>
+            <div class="gantt-months">
+              <span>ENE</span><span>FEB</span><span>MAR</span><span>ABR</span><span>MAY</span><span>JUN</span>
+            </div>
+            <div class="gantt-row-label">Excavación</div>
+            <div class="gantt-track">
+              <div class="gantt-bar" style="left:0%;width:28%;background:#E86B00;"></div>
+            </div>
+            <div class="gantt-row-label">Cimentación</div>
+            <div class="gantt-track">
+              <div class="gantt-bar" style="left:20%;width:26%;background:#8FA8C0;"></div>
+            </div>
+            <div class="gantt-row-label">Estructura</div>
+            <div class="gantt-track">
+              <div class="gantt-bar" style="left:38%;width:32%;background:#1F6EAA;"></div>
+            </div>
+            <div class="gantt-row-label">Mampostería</div>
+            <div class="gantt-track">
+              <div class="gantt-bar" style="left:55%;width:28%;background:#1A9A50;"></div>
+            </div>
+            <div class="gantt-row-label">Acabados</div>
+            <div class="gantt-track">
+              <div class="gantt-bar" style="left:72%;width:28%;background:#3A9FD8;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APU table card -->
+        <div class="ui-card">
+          <div class="ui-card-title">📊 Presupuesto APU — Ítems</div>
+          <table class="apu-table">
+            <thead>
+              <tr>
+                <th>Ítem</th>
+                <th>Und</th>
+                <th class="num">Cant</th>
+                <th class="num">V/Unitario</th>
+                <th class="num">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Concreto 3000 PSI</td>
+                <td>m³</td>
+                <td class="num">10</td>
+                <td class="num">$520.000</td>
+                <td class="num">$5.200.000</td>
+              </tr>
+              <tr>
+                <td>Acero de refuerzo</td>
+                <td>kg</td>
+                <td class="num">800</td>
+                <td class="num">$4.200</td>
+                <td class="num">$3.360.000</td>
+              </tr>
+              <tr>
+                <td>Mampostería bloque</td>
+                <td>m²</td>
+                <td class="num">120</td>
+                <td class="num">$85.000</td>
+                <td class="num">$10.200.000</td>
+              </tr>
+              <tr class="apu-total-row">
+                <td colspan="4">COSTO DIRECTO</td>
+                <td class="num">$18.760.000</td>
+              </tr>
+              <tr class="apu-aiu-row">
+                <td colspan="5">AIU — Admin 15% + Imprevistos 5% + Utilidad 8%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stats-bar-inner">
+        <div class="stat-item">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Sin internet</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">🇨🇴</div>
+          <div class="stat-label">Colombia</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">+3.200</div>
+          <div class="stat-label">APUs en catálogo</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Mensualidades obligatorias</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUÉ ES FMG -->
+  <section class="section" id="que-es">
+    <div class="container">
+      <span class="section-label">¿Qué es?</span>
+      <h2 class="section-title">Software de presupuestos diseñado<br><span>para la construcción colombiana</span></h2>
+      <p class="section-sub">
+        FMG Core Construct es una aplicación de escritorio para Windows que integra todos los
+        elementos de un presupuesto de obra: APUs, programación Gantt, administración y utilidad.
+        Desarrollado por FMG Architects Design Studio en Colombia.
+      </p>
+      <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:center;">
+        <div style="flex:1;min-width:260px;">
+          <img src="assets/engineer_site.jpeg" alt="Ingeniero usando FMG Core Construct en obra"
+               style="width:100%;max-width:420px;border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,.5);border:1px solid rgba(31,110,170,.2);object-fit:cover;">
+        </div>
+        <div style="flex:1;min-width:260px;display:flex;flex-direction:column;gap:16px;">
+          <div style="padding:18px;background:var(--navy-card);border-radius:10px;border:1px solid rgba(31,110,170,.2);">
+            <strong style="color:var(--orange);">Para quién</strong>
+            <p style="font-size:.9rem;color:var(--gray-lt);margin-top:6px;">Ingenieros civiles, arquitectos, residentes de obra y contratistas que elaboran presupuestos para licitaciones públicas y privadas.</p>
+          </div>
+          <div style="padding:18px;background:var(--navy-card);border-radius:10px;border:1px solid rgba(31,110,170,.2);">
+            <strong style="color:var(--orange);">Catálogo regional</strong>
+            <p style="font-size:.9rem;color:var(--gray-lt);margin-top:6px;">Más de 3.200 APUs con precios actualizados del Pacífico Colombiano. Referenciados en Chocó, Valle del Cauca, Nariño y Cauca.</p>
+          </div>
+          <div style="padding:18px;background:var(--navy-card);border-radius:10px;border:1px solid rgba(31,110,170,.2);">
+            <strong style="color:var(--orange);">100% offline</strong>
+            <p style="font-size:.9rem;color:var(--gray-lt);margin-top:6px;">Trabaja en campo sin señal. Tus proyectos y datos se guardan localmente — sin servidores, sin suscripciones forzadas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUNCIONES -->
+  <section class="section section-alt" id="funciones">
+    <div class="container">
+      <span class="section-label">Funcionalidades</span>
+      <h2 class="section-title">Todo lo que necesitas para<br><span>presupuestar una obra</span></h2>
+      <p class="section-sub">
+        Seis módulos integrados en una sola aplicación. Sin curva de aprendizaje técnica.
+      </p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Análisis de Precios Unitarios (APU)</div>
+          <div class="feature-desc">Material, mano de obra y equipo desglosados por ítem. Calcula costos directos con precisión profesional.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🗂️</div>
+          <div class="feature-title">Catálogo Pacífico Colombiano</div>
+          <div class="feature-desc">+3.200 APUs con precios regionales actualizados. Importa ítems directamente al presupuesto con un clic.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <div class="feature-title">Diagrama Gantt + WBS</div>
+          <div class="feature-desc">Programación de obra integrada con estructura de desglose de trabajo (WBS). Exportable a XML para MS Project.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💹</div>
+          <div class="feature-title">Admin % / AIU Automático</div>
+          <div class="feature-desc">Módulo de administración con desglose de Personal, Operativos y Tributaria. Cálculo automático de AIU sobre costo directo.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📤</div>
+          <div class="feature-title">Exportación a Excel</div>
+          <div class="feature-desc">Genera reportes listos para entregar al cliente o adjuntar a licitaciones. Formato profesional con encabezados personalizados.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">100% Offline — Sin internet</div>
+          <div class="feature-desc">Opera en campo sin conectividad. Datos seguros en tu equipo. Compatible con Windows 10 y 11 x64.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TUTORIAL VIDEO -->
+  <section class="section section-alt" id="tutorial">
+    <div class="container" style="text-align:center;">
+      <span class="section-label">Tutorial en video</span>
+      <h2 class="section-title">Mira cómo funciona<br><span>FMG Core Construct</span></h2>
+      <p class="section-sub" style="margin:0 auto 40px;">
+        Aprende a presupuestar tu primera obra en minutos — desde cero hasta exportar el informe final.
+      </p>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           ACTUALIZA: reemplaza VIDEO_ID con el ID de tu video de YouTube.
+           Ejemplo: si la URL es https://youtu.be/dQw4w9WgXcQ
+                    el VIDEO_ID es  dQw4w9WgXcQ
+      ════════════════════════════════════════════════════════════════════ -->
+      <div style="
+        position: relative;
+        width: 100%;
+        max-width: 860px;
+        margin: 0 auto;
+        aspect-ratio: 16 / 9;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow), 0 0 0 2px rgba(31,110,170,.35);
+        background: var(--navy-deep);
+      ">
+        <iframe
+          id="yt-tutorial"
+          src="https://www.youtube.com/embed/VIDEO_ID?rel=0&modestbranding=1&color=white"
+          title="Tutorial FMG Core Construct — Presupuestos de obra paso a paso"
+          style="position:absolute;inset:0;width:100%;height:100%;border:0;"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+
+        <!-- Overlay que se muestra mientras el VIDEO_ID sea el placeholder -->
+        <div id="yt-placeholder" style="
+          position:absolute;inset:0;display:flex;flex-direction:column;
+          align-items:center;justify-content:center;gap:16px;
+          background:var(--navy-deep);
+        ">
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+            <circle cx="36" cy="36" r="35" stroke="rgba(31,110,170,.5)" stroke-width="2"/>
+            <circle cx="36" cy="36" r="28" fill="rgba(31,110,170,.15)"/>
+            <polygon points="29,22 29,50 54,36" fill="rgba(31,110,170,.8)"/>
+          </svg>
+          <p style="color:var(--gray);font-size:.95rem;font-family:var(--font-mono);">
+            Video tutorial próximamente
+          </p>
+          <p style="color:var(--gray);font-size:.8rem;opacity:.6;">
+            Canal: <strong style="color:var(--blue-lt);">FMG Architects Design Studio</strong>
+          </p>
+        </div>
+      </div>
+
+      <p style="margin-top:20px;font-size:.9rem;color:var(--gray);font-family:var(--font-mono);">
+        🎬 Canal YouTube →
+        <a href="https://www.youtube.com/@FMGArchitectsDesignStudio"
+           target="_blank" rel="noopener"
+           style="color:var(--blue-lt);text-decoration:none;border-bottom:1px solid rgba(58,159,216,.4);">
+          FMG Architects Design Studio
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <script>
+    // Ocultar overlay cuando el VIDEO_ID real esté configurado
+    (function() {
+      var iframe = document.getElementById('yt-tutorial');
+      var overlay = document.getElementById('yt-placeholder');
+      if (iframe && overlay) {
+        var src = iframe.getAttribute('src') || '';
+        if (!src.includes('VIDEO_ID')) {
+          overlay.style.display = 'none';
+        }
+      }
+    })();
+  </script>
+
+  <!-- PLANS -->
+  <section class="section" id="planes">
+    <div class="container">
+      <span class="section-label">Planes y precios</span>
+      <h2 class="section-title">Elige el plan que se ajusta<br><span>a tu perfil</span></h2>
+      <p class="section-sub">
+        Planes en pesos colombianos. Sin cuotas ocultas. Activación inmediata tras confirmación de pago.
+      </p>
+      <div class="plans-grid">
+
+        <!-- Plan A -->
+        <div class="plan-card featured">
+          <div class="plan-badge">Más popular</div>
+          <div class="plan-letter">Plan A</div>
+          <div class="plan-name">Licencia Profesional</div>
+          <div class="plan-price">$449.000 <sub>COP</sub></div>
+          <div class="plan-price-note">Pago único — licencia permanente</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li>Licencia permanente sin mensualidades</li>
+            <li>Catálogo +3.200 APUs incluido</li>
+            <li>Soporte técnico 6 meses</li>
+            <li>Manual de usuario incluido</li>
+            <li>Actualizaciones del período</li>
+            <li>Renovación catálogo año 2+: $149.000/año</li>
+          </ul>
+          <div class="plan-cta">
+            <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20el%20Plan%20A%20Licencia%20Profesional%20de%20FMG%20Core%20Construct" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;">
+              Adquirir Plan A
+            </a>
+          </div>
+        </div>
+
+        <!-- Plan B -->
+        <div class="plan-card">
+          <div class="plan-letter">Plan B</div>
+          <div class="plan-name">Educativo</div>
+          <div class="plan-price">$149.000 <sub>COP</sub></div>
+          <div class="plan-price-note">Estudiante · 2 años renovables</div>
+          <hr class="plan-divider">
+          <div class="plan-b-opts">
+            <div class="plan-b-opt">
+              <span>🎓 Estudiante</span>
+              <span class="price-b">$149.000</span>
+            </div>
+            <div class="plan-b-opt">
+              <span>👨‍🏫 Docente</span>
+              <span class="price-b">$229.000</span>
+            </div>
+          </div>
+          <ul class="plan-features" style="margin-top:8px;">
+            <li>Vigencia 2 años renovables</li>
+            <li>Catálogo completo incluido</li>
+            <li>Manual de usuario</li>
+            <li class="no">Solo uso académico (no comercial)</li>
+            <li>Requiere correo institucional</li>
+          </ul>
+          <div class="plan-cta">
+            <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20el%20Plan%20B%20Educativo%20de%20FMG%20Core%20Construct" target="_blank" class="btn btn-outline-orange" style="width:100%;justify-content:center;">
+              Adquirir Plan B
+            </a>
+          </div>
+        </div>
+
+        <!-- Plan C -->
+        <div class="plan-card">
+          <div class="plan-letter">Plan C</div>
+          <div class="plan-name">Institucional</div>
+          <div class="plan-price">Desde <br>$6.500.000 <sub>COP</sub></div>
+          <div class="plan-price-note">Alcaldías · Gobernaciones · Entidades públicas</div>
+          <hr class="plan-divider">
+          <ul class="plan-features">
+            <li>Branding de la entidad</li>
+            <li>Módulos completos: Salarios, IPC/ICCV</li>
+            <li>Catálogo regional personalizado</li>
+            <li>Capacitación virtual incluida</li>
+            <li>Soporte prioritario 24 h hábiles</li>
+            <li>Licencia multiusuario en red local</li>
+            <li>Factura electrónica + cotización formal</li>
+          </ul>
+          <div class="plan-cta">
+            <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20cotizaci%C3%B3n%20del%20Plan%20C%20Institucional%20de%20FMG%20Core%20Construct" target="_blank" class="btn btn-outline-orange" style="width:100%;justify-content:center;">
+              Solicitar cotización
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Payment methods -->
+      <div style="text-align:center;margin-top:36px;">
+        <p style="color:var(--gray);font-size:.88rem;margin-bottom:12px;">💳 Formas de pago aceptadas</p>
+        <div class="payment-methods" style="justify-content:center;">
+          <span class="payment-chip">🔵 Transferencia inmediata</span>
+          <span class="payment-chip">🌐 PayPal</span>
+          <span class="payment-chip">🏦 PSE</span>
+          <span class="payment-chip">💵 Efectivo</span>
+          <span class="payment-chip">🧾 Factura electrónica</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARATIVA -->
+  <section class="section section-alt" id="comparativa">
+    <div class="container">
+      <span class="section-label">¿Por qué FMG?</span>
+      <h2 class="section-title">Más funciones,<br><span>precio hasta 6× menor</span></h2>
+      <p class="section-sub">
+        Comparado con las alternativas del mercado, FMG Core Construct ofrece las funcionalidades
+        esenciales al precio más accesible para el profesional colombiano.
+      </p>
+      <div style="overflow-x:auto;">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Característica</th>
+              <th class="fmg">FMG Core Construct</th>
+              <th>OPUS</th>
+              <th>Neodata</th>
+              <th>Quercusoft</th>
+              <th>Construdata</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Precio base (COP)</td>
+              <td class="fmg">$449.000 <span class="tag-win">Más bajo</span></td>
+              <td>~$860.000</td>
+              <td>~$2.795.000</td>
+              <td>$495.000 + $247k/año</td>
+              <td>$177.000 (solo BD)</td>
+            </tr>
+            <tr>
+              <td>APUs incluidos</td>
+              <td class="fmg"><span class="check">✓</span> +3.200 regionales</td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span> solo catálogo</td>
+            </tr>
+            <tr>
+              <td>Gantt WBS integrado</td>
+              <td class="fmg"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="cross">✗</span></td>
+            </tr>
+            <tr>
+              <td>Admin % / AIU automático</td>
+              <td class="fmg"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td>Parcial</td>
+              <td><span class="cross">✗</span></td>
+            </tr>
+            <tr>
+              <td>100% offline</td>
+              <td class="fmg"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td>Parcial</td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Catálogo Pacífico colombiano</td>
+              <td class="fmg"><span class="check">✓</span> <span class="tag-win">Exclusivo</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="cross">✗</span></td>
+              <td>Parcial</td>
+            </tr>
+            <tr>
+              <td>Exportación Excel</td>
+              <td class="fmg"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+            </tr>
+            <tr>
+              <td>Plan sin mensualidades</td>
+              <td class="fmg"><span class="check">✓</span> Plan A permanente</td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="cross">✗</span></td>
+              <td>+ cuota anual</td>
+              <td><span class="cross">✗</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section class="section download-section" id="descarga">
+    <div class="bg-grid"></div>
+    <div class="container" style="position:relative;z-index:2;">
+      <div class="download-box">
+        <img src="assets/logo_2d.jpeg" alt="FMG Core Construct Logo" class="download-logo">
+        <h2 class="download-title">Descarga la Demo gratis</h2>
+        <p class="download-sub">
+          Prueba FMG Core Construct sin compromiso. La versión Demo incluye las funciones principales
+          con límite de 10 modificaciones por proyecto.
+        </p>
+        <!-- ACTUALIZA este enlace con la URL del instalador en GitHub Releases o Google Drive -->
+        <a href="#" class="btn btn-primary" style="font-size:1rem;padding:16px 36px;" id="download-btn">
+          ⬇ Descargar FMG Core Construct Demo v1.0
+        </a>
+        <div class="download-specs">
+          <span class="spec-chip">🖥️ Windows 10 / 11</span>
+          <span class="spec-chip">⚙️ 64-bit (x64)</span>
+          <span class="spec-chip">📦 ~24.7 MB</span>
+          <span class="spec-chip">🔒 Sin internet requerido</span>
+        </div>
+        <p style="margin-top:18px;font-size:.78rem;color:var(--gray);">
+          ¿Prefieres verlo en acción antes de descargar?
+          <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20una%20demo%20guiada%20de%20FMG%20Core%20Construct" target="_blank"
+             style="color:var(--orange-lt);text-decoration:none;">Solicita una demo guiada por WhatsApp →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contacto">
+    <div class="container">
+      <span class="section-label">Contacto</span>
+      <h2 class="section-title">¿Tienes preguntas?<br><span>Estamos para ayudarte</span></h2>
+      <p class="section-sub">Lunes a viernes, 8:00 a.m. – 5:00 p.m. Respuesta en menos de 24 horas hábiles.</p>
+
+      <div class="contact-grid">
+        <!-- Contact info -->
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">📲</div>
+            <div>
+              <div class="contact-item-title">WhatsApp</div>
+              <div class="contact-item-val">
+                <a href="https://wa.me/573146904422" target="_blank">+57 314 690 4422</a>
+                <br><small style="color:var(--gray);font-size:.8rem;">Lun–Vie 8:00 a.m. – 5:00 p.m.</small>
+              </div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            <div>
+              <div class="contact-item-title">Correo electrónico</div>
+              <div class="contact-item-val">
+                <a href="mailto:fmgarchitectsdesignstudio@gmail.com">fmgarchitectsdesignstudio@gmail.com</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">💳</div>
+            <div>
+              <div class="contact-item-title">Formas de pago</div>
+              <div class="contact-item-val">
+                <div class="payment-methods" style="margin-top:8px;">
+                  <span class="payment-chip">Transferencia inmediata</span>
+                  <span class="payment-chip">PayPal</span>
+                  <span class="payment-chip">PSE</span>
+                  <span class="payment-chip">Efectivo</span>
+                  <span class="payment-chip">Factura electrónica</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🏢</div>
+            <div>
+              <div class="contact-item-title">Desarrollado por</div>
+              <div class="contact-item-val">FMG Architects Design Studio<br>
+                <small style="color:var(--gray);font-size:.8rem;">Colombia · 2026</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact form -->
+        <!-- ACTUALIZA el action con tu endpoint de Formspree: https://formspree.io/f/TU_ID -->
+        <form class="contact-form" action="https://formspree.io/f/xpqnwaan" method="POST">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nombre completo *</label>
+              <input type="text" name="nombre" class="form-input" placeholder="Tu nombre" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Profesión</label>
+              <input type="text" name="profesion" class="form-input" placeholder="Ingeniero, arquitecto...">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Correo electrónico *</label>
+              <input type="email" name="email" class="form-input" placeholder="tu@correo.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp / Teléfono</label>
+              <input type="tel" name="telefono" class="form-input" placeholder="+57 300 000 0000">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Plan de interés</label>
+            <select name="plan" class="form-select">
+              <option value="">— Selecciona un plan —</option>
+              <option value="A">Plan A — Licencia Profesional ($449.000)</option>
+              <option value="B">Plan B — Educativo ($149.000 / $229.000)</option>
+              <option value="C">Plan C — Institucional (desde $6.500.000)</option>
+              <option value="demo">Solo quiero la Demo gratis</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mensaje</label>
+            <textarea name="mensaje" class="form-textarea" placeholder="¿Tienes alguna pregunta o requerimiento especial?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="align-self:flex-start;">
+            Enviar mensaje
+          </button>
+          <p class="form-note">Tu información es confidencial. No enviamos spam.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="assets/logo_2d.jpeg" alt="FMG Logo" class="nav-logo-img">
+            <div class="nav-logo-text">
+              FMG Core Construct
+              <small>FMG Architects Design Studio</small>
+            </div>
+          </div>
+          <p>Software profesional de presupuestos de obra para ingenieros y arquitectos colombianos. Desarrollado por FMG Architects Design Studio.</p>
+          <div style="display:flex;gap:10px;margin-top:4px;">
+            <a href="https://wa.me/573146904422" target="_blank" style="color:var(--gray);text-decoration:none;font-size:.85rem;">WhatsApp</a>
+            <span style="color:var(--gray);">·</span>
+            <a href="mailto:fmgarchitectsdesignstudio@gmail.com" style="color:var(--gray);text-decoration:none;font-size:.85rem;">Email</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#funciones">Funcionalidades</a></li>
+            <li><a href="#planes">Planes y precios</a></li>
+            <li><a href="#comparativa">¿Por qué FMG?</a></li>
+            <li><a href="#descarga">Descargar Demo</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Planes</h4>
+          <ul>
+            <li><a href="#planes">Plan A — Licencia Profesional</a></li>
+            <li><a href="#planes">Plan B — Educativo</a></li>
+            <li><a href="#planes">Plan C — Institucional</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 FMG Architects Design Studio · Colombia · Todos los derechos reservados</p>
+        <p class="footer-tags">#presupuestosdeobra #construccioncolombia #ingenieriacivil #FMGCoreConstruct</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WHATSAPP FAB -->
+  <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20FMG%20Core%20Construct"
+     target="_blank" class="wa-fab" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+    </svg>
+  </a>
+
+  <script>
+    // Mobile nav toggle
+    document.getElementById('nav-toggle').addEventListener('click', function() {
+      const mobile = document.getElementById('nav-mobile');
+      mobile.classList.toggle('open');
+    });
+
+    // Close mobile nav on link click
+    document.querySelectorAll('.nav-mobile a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        document.getElementById('nav-mobile').classList.remove('open');
+      });
+    });
+
+    // Sticky nav shadow on scroll
+    window.addEventListener('scroll', function() {
+      const nav = document.getElementById('main-nav');
+      if (window.scrollY > 20) {
+        nav.style.boxShadow = '0 4px 30px rgba(0,0,0,.5)';
+      } else {
+        nav.style.boxShadow = 'none';
+      }
+    });
+
+    // Download button placeholder alert
+    document.getElementById('download-btn').addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href === '#') {
+        e.preventDefault();
+        alert('El enlace de descarga estará disponible pronto.\n\nPor ahora, contáctanos por WhatsApp:\n+57 314 690 4422');
+      }
+    });
+  </script>
+
+</body>
+</html>
