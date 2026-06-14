@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FMG Core Construct — Descarga tu instalador</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="assets/icon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:      #0D1B2A;
+      --navy-card: #111E2E;
+      --navy-mid:  #162233;
+      --navy-deep: #060E18;
+      --blue:      #1F6EAA;
+      --blue-lt:   #3A9FD8;
+      --orange:    #E86B00;
+      --orange-lt: #FF8C30;
+      --white:     #FFFFFF;
+      --gray:      #8FA8C0;
+      --gray-lt:   #B8CDD8;
+      --green:     #1A9A50;
+      --green-lt:  #27ae60;
+      --font-main: 'Poppins', 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+      --radius:    12px;
+      --shadow:    0 8px 32px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-main);
+      background: var(--navy);
+      color: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    .nav {
+      background: rgba(6,14,24,.95);
+      border-bottom: 1px solid rgba(31,110,170,.18);
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--white);
+      font-weight: 800;
+      font-size: .95rem;
+    }
+    .nav-logo img {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 2px;
+      border: 2px solid var(--orange);
+      object-fit: contain;
+    }
+    .nav-back {
+      color: var(--gray-lt);
+      text-decoration: none;
+      font-size: .85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--orange-lt); }
+
+    /* Main content */
+    main { flex: 1; padding: 48px 0 80px; }
+
+    /* Confirmation header */
+    .confirm-header {
+      text-align: center;
+      padding: 36px 24px 32px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      margin-bottom: 40px;
+    }
+    .confirm-icon {
+      width: 72px; height: 72px;
+      background: rgba(26,154,80,.15);
+      border: 2px solid rgba(26,154,80,.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 20px;
+    }
+    .confirm-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .confirm-title span { color: var(--green-lt); }
+    .confirm-sub { color: var(--gray-lt); font-size: 1rem; }
+
+    /* Plan card */
+    .plan-card {
+      background: var(--navy-card);
+      border: 1px solid rgba(232,107,0,.3);
+      border-radius: 16px;
+      padding: 32px 28px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 40px rgba(232,107,0,.08);
+    }
+
+    .plan-badge {
+      display: inline-block;
+      background: rgba(232,107,0,.12);
+      border: 1px solid rgba(232,107,0,.35);
+      color: var(--orange);
+      font-size: .72rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 12px;
+    }
+
+    .plan-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+
+    .plan-price {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--orange);
+      font-family: var(--font-mono);
+      margin-bottom: 6px;
+    }
+
+    .plan-note { font-size: .85rem; color: var(--gray); margin-bottom: 24px; }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--orange);
+      color: #fff;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 16px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(232,107,0,.4);
+      transition: background .2s, transform .2s, box-shadow .2s;
+      width: 100%;
+      justify-content: center;
+    }
+    .download-btn:hover {
+      background: var(--orange-lt);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(232,107,0,.55);
+    }
+
+    .download-specs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .spec-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: .78rem;
+      color: var(--gray-lt);
+    }
+
+    /* Steps */
+    .steps-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-lt);
+      margin-bottom: 16px;
+      padding-top: 8px;
+    }
+
+    .steps { display: flex; flex-direction: column; gap: 14px; }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 18px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px;
+    }
+
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .85rem;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+    .step-num.done { background: rgba(26,154,80,.2); color: var(--green-lt); border: 1px solid rgba(26,154,80,.4); }
+    .step-num.active { background: rgba(232,107,0,.2); color: var(--orange); border: 1px solid rgba(232,107,0,.4); }
+    .step-num.pending { background: rgba(255,255,255,.06); color: var(--gray); border: 1px solid rgba(255,255,255,.12); }
+
+    .step-body {}
+    .step-label { font-weight: 700; font-size: .92rem; margin-bottom: 2px; }
+    .step-desc { font-size: .83rem; color: var(--gray); }
+
+    /* Payment methods */
+    .payment-card {
+      background: var(--navy-card);
+      border: 1px solid rgba(31,110,170,.2);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin-bottom: 24px;
+    }
+    .payment-title { font-weight: 700; margin-bottom: 12px; font-size: .95rem; }
+    .payment-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .payment-chip {
+      background: rgba(31,110,170,.1);
+      border: 1px solid rgba(31,110,170,.25);
+      color: var(--gray-lt);
+      font-size: .78rem;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+    }
+
+    /* Contact bar */
+    .contact-bar {
+      background: rgba(31,110,170,.08);
+      border: 1px solid rgba(31,110,170,.2);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .contact-bar p { font-size: .88rem; color: var(--gray-lt); }
+    .contact-links { display: flex; gap: 14px; flex-wrap: wrap; }
+    .contact-link {
+      color: var(--orange-lt);
+      text-decoration: none;
+      font-size: .88rem;
+      font-weight: 600;
+      transition: color .2s;
+    }
+    .contact-link:hover { color: var(--white); }
+
+    /* Footer */
+    footer {
+      background: var(--navy-deep);
+      border-top: 1px solid rgba(31,110,170,.12);
+      padding: 20px 24px;
+      text-align: center;
+      font-size: .8rem;
+      color: var(--gray);
+    }
+
+    @media (max-width: 600px) {
+      .confirm-title { font-size: 1.4rem; }
+      .plan-price { font-size: 1.4rem; }
+      .download-btn { font-size: .92rem; padding: 14px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/logo_2d.jpeg" alt="FMG Logo">
+        FMG Core Construct
+      </a>
+      <a href="index.html" class="nav-back">← Volver al inicio</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <div class="container">
+
+      <!-- Confirmation header -->
+      <div class="confirm-header">
+        <div class="confirm-icon">✓</div>
+        <h1 class="confirm-title">¡Registro <span>exitoso!</span></h1>
+        <p class="confirm-sub" id="confirm-sub">Descarga el instalador y sigue los pasos para activar tu licencia.</p>
+      </div>
+
+      <!-- Plan + Download card (populated by JS) -->
+      <div class="plan-card" id="plan-card">
+        <div class="plan-badge" id="dl-badge"></div>
+        <div class="plan-name" id="dl-name"></div>
+        <div class="plan-price" id="dl-price"></div>
+        <p class="plan-note" id="dl-note"></p>
+
+        <!-- ACTUALIZAR href con la URL real de GitHub Releases al subir el instalador -->
+        <a id="dl-btn" href="#" class="download-btn" download>
+          ⬇ Descargar instalador
+        </a>
+
+        <div class="download-specs">
+          <span class="spec-chip">🖥️ Windows 10 / 11</span>
+          <span class="spec-chip">⚙️ 64-bit (x64)</span>
+          <span class="spec-chip">📦 ~24.7 MB</span>
+          <span class="spec-chip">🔒 Sin internet requerido</span>
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <p class="steps-title">¿Qué sigue?</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num done">✓</div>
+          <div class="step-body">
+            <div class="step-label">Registro completado</div>
+            <div class="step-desc">Tus datos fueron recibidos. Recibirás una confirmación en tu correo.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num active">2</div>
+          <div class="step-body">
+            <div class="step-label">Descarga e instala</div>
+            <div class="step-desc">Descarga el instalador con el botón de arriba e instálalo en tu equipo Windows 10/11 x64.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num pending">3</div>
+          <div class="step-body">
+            <div class="step-label">Realiza el pago</div>
+            <div class="step-desc">
+              Transfiere el valor del plan a cualquiera de los medios de pago indicados abajo
+              y envíanos el comprobante por WhatsApp o correo.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num pending">4</div>
+          <div class="step-body">
+            <div class="step-label">Recibe tu código de activación</div>
+            <div class="step-desc">
+              Confirmado el pago, te enviamos el código de activación (<code style="color:var(--orange-lt);font-family:var(--font-mono);font-size:.82rem;">FMG-XXXX-XXXX-XXXX</code>)
+              en menos de 24 horas hábiles. Ingrésalo en la app para activar tu licencia.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment methods -->
+      <div class="payment-card" style="margin-top:32px;">
+        <div class="payment-title">💳 Formas de pago aceptadas</div>
+        <div class="payment-chips">
+          <span class="payment-chip">🔵 Transferencia inmediata</span>
+          <span class="payment-chip">🌐 PayPal</span>
+          <span class="payment-chip">🏦 PSE</span>
+          <span class="payment-chip">💵 Efectivo</span>
+          <span class="payment-chip">🧾 Factura electrónica</span>
+        </div>
+      </div>
+
+      <!-- Contact bar -->
+      <div class="contact-bar">
+        <p>¿Tienes preguntas? Escríbenos — respondemos en menos de 24 h hábiles.</p>
+        <div class="contact-links">
+          <a href="https://wa.me/573146904422" target="_blank" class="contact-link">📲 WhatsApp</a>
+          <a href="mailto:fmgarchitectsdesignstudio@gmail.com" class="contact-link">✉️ Correo</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    © 2026 FMG Architects Design Studio · Colombia · Todos los derechos reservados
+  </footer>
+
+  <script>
+    // ── Configuración de planes y URLs de descarga ────────────────────────────
+    //
+    //  ACTUALIZAR los href cuando subas los instaladores a GitHub Releases:
+    //  https://github.com/fmgarchitectsdesignstudio-code/fmgcc/releases
+    //
+    var _PLANS = {
+      A: {
+        badge:    'Plan A · Profesional',
+        name:     'Licencia Profesional Permanente',
+        price:    '$449.000 COP',
+        note:     'Pago único · sin mensualidades · catálogo +3.200 APUs · soporte 6 meses.',
+        btnLabel: '⬇ Descargar FMG Core Construct v1.0',
+        // ACTUALIZAR esta URL después de subir el instalador a GitHub Releases:
+        href:     'https://github.com/fmgarchitectsdesignstudio-code/fmgcc/releases/download/v1.1/FMGCoreConstruct_v1.0_Setup.exe',
+        sub:      ''
+      },
+      'B-stu': {
+        badge:    'Plan B · Educativo — Estudiante',
+        name:     'Licencia Educativa Estudiante',
+        price:    '$149.000 COP',
+        note:     'Vigencia 2 años · uso académico · hasta 20 APUs por proyecto.',
+        btnLabel: '⬇ Descargar FMG Core Construct Educativa',
+        // ACTUALIZAR esta URL después de subir el instalador a GitHub Releases:
+        href:     'https://github.com/fmgarchitectsdesignstudio-code/fmgcc/releases/download/v1.1/FMGCoreConstruct_Educativa_Setup.exe',
+        sub:      'Modalidad Estudiante — recibirás código STU al confirmar el pago.'
+      },
+      'B-edu': {
+        badge:    'Plan B · Educativo — Docente',
+        name:     'Licencia Educativa Docente',
+        price:    '$229.000 COP',
+        note:     'Vigencia 2 años · uso académico · sin límite de APUs.',
+        btnLabel: '⬇ Descargar FMG Core Construct Educativa',
+        // ACTUALIZAR esta URL después de subir el instalador a GitHub Releases:
+        href:     'https://github.com/fmgarchitectsdesignstudio-code/fmgcc/releases/download/v1.1/FMGCoreConstruct_Educativa_Setup.exe',
+        sub:      'Modalidad Docente — recibirás código EDU al confirmar el pago.'
+      },
+      B: {  // fallback si no viene sub-plan
+        badge:    'Plan B · Educativo',
+        name:     'Licencia Educativa',
+        price:    '$149.000 / $229.000 COP',
+        note:     'Vigencia 2 años · uso académico. El precio exacto depende de la modalidad seleccionada.',
+        btnLabel: '⬇ Descargar FMG Core Construct Educativa',
+        href:     'https://github.com/fmgarchitectsdesignstudio-code/fmgcc/releases/download/v1.1/FMGCoreConstruct_Educativa_Setup.exe',
+        sub:      ''
+      }
+    };
+
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var plan   = params.get('plan') || 'A';
+      var cfg    = _PLANS[plan] || _PLANS['A'];
+
+      document.getElementById('dl-badge').textContent = cfg.badge;
+      document.getElementById('dl-name').textContent  = cfg.name;
+      document.getElementById('dl-price').textContent = cfg.price;
+      document.getElementById('dl-note').textContent  = cfg.note + (cfg.sub ? ' ' + cfg.sub : '');
+      document.getElementById('dl-btn').textContent   = cfg.btnLabel;
+      document.getElementById('dl-btn').setAttribute('href', cfg.href);
+
+      document.title = 'FMG Core Construct — ' + cfg.name;
+    })();
+  </script>
+
+</body>
+</html>

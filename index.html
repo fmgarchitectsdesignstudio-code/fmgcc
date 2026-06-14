@@ -869,6 +869,114 @@
       .form-row { grid-template-columns: 1fr; }
       .download-box { padding: 36px 24px; }
     }
+
+    /* ─────────────────────────────────────
+       PURCHASE MODAL
+    ───────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(6,14,24,.88);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--navy-card);
+      border: 1px solid rgba(232,107,0,.3);
+      border-radius: 16px;
+      padding: 36px 32px 28px;
+      max-width: 460px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 20px 80px rgba(0,0,0,.65);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px; right: 14px;
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      line-height: 1;
+      transition: color .2s, background .2s;
+    }
+    .modal-close:hover { color: var(--white); background: rgba(255,255,255,.08); }
+
+    .modal-plan-badge {
+      display: inline-block;
+      background: rgba(232,107,0,.12);
+      border: 1px solid rgba(232,107,0,.35);
+      color: var(--orange);
+      font-size: .72rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+
+    .modal-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 2px; }
+
+    .modal-price {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--orange);
+      font-family: var(--font-mono);
+      margin-bottom: 6px;
+    }
+
+    .modal-desc {
+      font-size: .83rem;
+      color: var(--gray);
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .subplan-opts { display: flex; gap: 10px; margin: 8px 0 4px; }
+
+    .subplan-opt {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.04);
+      border: 2px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .83rem;
+      color: var(--gray-lt);
+      transition: border-color .2s, background .2s;
+    }
+    .subplan-opt input[type="radio"] { accent-color: var(--orange); }
+    .subplan-opt.selected {
+      border-color: var(--orange);
+      background: rgba(232,107,0,.08);
+      color: var(--white);
+    }
+
+    .modal-note {
+      font-size: .74rem;
+      color: var(--gray);
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -1241,9 +1349,9 @@
             <li>Renovación catálogo año 2+: $149.000/año</li>
           </ul>
           <div class="plan-cta">
-            <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20el%20Plan%20A%20Licencia%20Profesional%20de%20FMG%20Core%20Construct" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;">
+            <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openPlanModal('A')">
               Adquirir Plan A
-            </a>
+            </button>
           </div>
         </div>
 
@@ -1272,9 +1380,9 @@
             <li>Requiere correo institucional</li>
           </ul>
           <div class="plan-cta">
-            <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20el%20Plan%20B%20Educativo%20de%20FMG%20Core%20Construct" target="_blank" class="btn btn-outline-orange" style="width:100%;justify-content:center;">
+            <button class="btn btn-outline-orange" style="width:100%;justify-content:center;" onclick="openPlanModal('B')">
               Adquirir Plan B
-            </a>
+            </button>
           </div>
         </div>
 
@@ -1295,8 +1403,8 @@
             <li>Factura electrónica + cotización formal</li>
           </ul>
           <div class="plan-cta">
-            <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20cotizaci%C3%B3n%20del%20Plan%20C%20Institucional%20de%20FMG%20Core%20Construct" target="_blank" class="btn btn-outline-orange" style="width:100%;justify-content:center;">
-              Solicitar cotización
+            <a href="#contacto" class="btn btn-outline-orange" style="width:100%;justify-content:center;">
+              Solicitar cotización →
             </a>
           </div>
         </div>
@@ -1586,6 +1694,61 @@
     </div>
   </footer>
 
+  <!-- PURCHASE MODAL -->
+  <div id="plan-modal" class="modal-overlay" onclick="closePlanModal(event)">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" onclick="closePlanModal(null,true)" aria-label="Cerrar">✕</button>
+
+      <div class="modal-plan-badge" id="modal-badge"></div>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-price" id="modal-price"></div>
+      <p class="modal-desc" id="modal-desc"></p>
+
+      <form id="plan-form" action="https://formspree.io/f/xpqnwaan" method="POST">
+        <input type="hidden" name="tipo_solicitud" value="Adquisición de plan">
+        <input type="hidden" name="plan_elegido" id="input-plan">
+        <input type="hidden" name="_next" id="input-next">
+
+        <!-- Sub-plan solo visible en Plan B -->
+        <div id="b-subplan" style="display:none;margin-bottom:16px;">
+          <label class="form-label" style="margin-bottom:6px;display:block;">Modalidad</label>
+          <div class="subplan-opts">
+            <label class="subplan-opt selected" id="opt-stu">
+              <input type="radio" name="modalidad" value="Estudiante — $149.000 COP" checked onchange="onSubplan('stu')">
+              <span>🎓 Estudiante · $149k</span>
+            </label>
+            <label class="subplan-opt" id="opt-edu">
+              <input type="radio" name="modalidad" value="Docente — $229.000 COP" onchange="onSubplan('edu')">
+              <span>👨‍🏫 Docente · $229k</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nombre completo *</label>
+          <input type="text" name="nombre" class="form-input" placeholder="Tu nombre" required>
+        </div>
+        <div class="form-group" style="margin-top:12px;">
+          <label class="form-label">Correo electrónico *</label>
+          <input type="email" name="email" class="form-input" placeholder="tu@correo.com" required>
+        </div>
+        <div class="form-group" style="margin-top:12px;">
+          <label class="form-label">WhatsApp / Teléfono *</label>
+          <input type="tel" name="telefono" class="form-input" placeholder="+57 300 000 0000" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="modal-submit-btn"
+                style="width:100%;justify-content:center;margin-top:20px;font-size:1rem;padding:14px 24px;">
+          Registrarme y descargar →
+        </button>
+        <p class="modal-note">
+          El instalador está disponible de inmediato.<br>
+          El código de activación se entrega al confirmar el pago.
+        </p>
+      </form>
+    </div>
+  </div>
+
   <!-- WHATSAPP FAB -->
   <a href="https://wa.me/573146904422?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20FMG%20Core%20Construct"
      target="_blank" class="wa-fab" aria-label="Contactar por WhatsApp">
@@ -1625,6 +1788,80 @@
         e.preventDefault();
         alert('El enlace de descarga estará disponible pronto.\n\nPor ahora, contáctanos por WhatsApp:\n+57 314 690 4422');
       }
+    });
+
+    // ── Purchase Modal ─────────────────────────────────────────────────────────
+    var _planCfg = {
+      A: {
+        badge:  'Plan A · Profesional',
+        title:  'Licencia Profesional Permanente',
+        price:  '$449.000 COP',
+        desc:   'Pago único · sin mensualidades · catálogo +3.200 APUs · soporte 6 meses.',
+        subplan: false,
+        param:  'A'
+      },
+      B: {
+        badge:  'Plan B · Educativo',
+        title:  'Licencia Educativa (2 años)',
+        price:  '$149.000 / $229.000 COP',
+        desc:   'Vigencia 2 años renovables · solo uso académico · no comercial.',
+        subplan: true,
+        param:  'B'
+      }
+    };
+
+    var _curSub = 'stu';
+
+    function _graciasBase() {
+      return window.location.href
+        .replace(/[?#].*$/, '')
+        .replace(/\/[^\/]*$/, '/');
+    }
+
+    function openPlanModal(plan) {
+      var cfg = _planCfg[plan];
+      if (!cfg) return;
+      document.getElementById('modal-badge').textContent = cfg.badge;
+      document.getElementById('modal-title').textContent = cfg.title;
+      document.getElementById('modal-price').textContent = cfg.price;
+      document.getElementById('modal-desc').textContent  = cfg.desc;
+      document.getElementById('input-plan').value = cfg.badge;
+
+      var bSub = document.getElementById('b-subplan');
+      bSub.style.display = cfg.subplan ? 'block' : 'none';
+      if (cfg.subplan) {
+        _curSub = 'stu';
+        document.querySelector('[name="modalidad"][value^="Estudiante"]').checked = true;
+        document.getElementById('opt-stu').classList.add('selected');
+        document.getElementById('opt-edu').classList.remove('selected');
+      }
+
+      var param = cfg.subplan ? (cfg.param + '-' + _curSub) : cfg.param;
+      document.getElementById('input-next').value = _graciasBase() + 'gracias.html?plan=' + param;
+
+      document.getElementById('plan-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function() {
+        document.getElementById('plan-form').querySelector('[name="nombre"]').focus();
+      }, 80);
+    }
+
+    function onSubplan(sub) {
+      _curSub = sub;
+      document.getElementById('opt-stu').classList.toggle('selected', sub === 'stu');
+      document.getElementById('opt-edu').classList.toggle('selected', sub === 'edu');
+      document.getElementById('input-next').value = _graciasBase() + 'gracias.html?plan=B-' + sub;
+    }
+
+    function closePlanModal(ev, force) {
+      if (force || (ev && ev.target === document.getElementById('plan-modal'))) {
+        document.getElementById('plan-modal').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closePlanModal(null, true);
     });
   </script>
 
