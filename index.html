@@ -1862,6 +1862,38 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closePlanModal(null, true);
     });
+
+    // AJAX submit → redirige manualmente a gracias.html?plan=X
+    // (evita depender del redirect de Formspree que en plan gratuito puede ignorar _next)
+    document.getElementById('plan-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var form = this;
+      var btn  = document.getElementById('modal-submit-btn');
+      var nextUrl = document.getElementById('input-next').value;
+
+      btn.disabled = true;
+      btn.textContent = 'Enviando…';
+
+      fetch(form.action, {
+        method:  'POST',
+        body:    new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function(resp) {
+        if (resp.ok) {
+          window.location.href = nextUrl;
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Registrarme y descargar →';
+          alert('Error al enviar el formulario. Inténtalo de nuevo o escríbenos por WhatsApp.');
+        }
+      })
+      .catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Registrarme y descargar →';
+        alert('Error de conexión. Verifica tu internet e inténtalo de nuevo.');
+      });
+    });
   </script>
 
 </body>
